@@ -25,6 +25,7 @@ function successAjax(xhttp) {
       Ha valemelyik függvényeteknek kell, akkor paraméterként adjátok át.
     */
     createTable(userDatas);
+    writeStat(userDatas);
   
 }
 
@@ -48,7 +49,6 @@ function generateRow(objElement, arrElement) {
 }
 
 function createTable(userData) {
-    document.querySelector('body').innerHTML = '';
     var table = document.createElement('table');
     var headData = ['Azonosító', 'Felhasználónév', 'Jelszó', 'Vezetéknév', 'Keresztnév', 
         'Ország', 'Állam/Megye', 'Irányítószám', 'Város', 'Cím', 'Nem', 'Születési dátum', 
@@ -62,10 +62,46 @@ function createTable(userData) {
             tr.appendChild(generateRow(userData[i], dataProps[j]));
             table.appendChild(tr);
         }
-        document.querySelector('body').appendChild(table);
+        document.querySelector('#table').appendChild(table);
     }
 }
 
+
+
+
+function searchOldest(userData) {
+    var birthDate;
+    var earlietsBorn = new Date(userData[0].birthdate);
+    var oldestUser = userData[0];
+    for (var i=1; i< userData.length; i++) {
+            birthDate = new Date(userData[i].birthdate);
+            if (earlietsBorn > birthDate) {
+                earlietsBorn = birthDate;
+                oldestUser = userData[i];
+            }
+        }
+return oldestUser.username +', ' + oldestUser.birthdate  ;
+}
+
+function myStatistic(userData) {
+    return {
+        'A legidősebb ember felhasználóneve, születési ideje': searchOldest(userData),
+        'A legfiatalabb ember felhasználóneve, születési ideje': searchOldest(userData),
+        'Átlagéletkor': searchOldest(userData),
+        'Össz életkor': searchOldest(userData),
+    }
+}
+
+
+function writeStat(userData) {
+    var divElem = document.getElementById('stat');
+    var stat = myStatistic(userData);
+    for (var i in stat) {
+        var pElem = document.createElement('p');
+        pElem.textContent = `${i} : ${stat[i]}`;
+    divElem.appendChild(pElem);
+    }
+}
 
 // Live servert használd mindig!!!!!
 /* IDE ÍRD A FÜGGVÉNYEKET!!!!!! NE EBBE AZ EGY SORBA HANEM INNEN LEFELÉ! */
