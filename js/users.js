@@ -80,7 +80,7 @@ function searchOldest(userData) {
                 oldestUser = userData[i];
             }
         }
-return oldestUser.username +', ' + oldestUser.birthdate  ;
+return oldestUser.username +', ' + formatBirthDate(firstBirth);  
 }
 
 
@@ -95,13 +95,21 @@ function searchYoungest(userData) {
                 youngestUser = userData[i];
             }
         }
-return youngestUser.username +', ' + youngestUser.birthdate  ;
+return youngestUser.username +', ' + formatBirthDate(lastBirth);
 }
 
 
 function formatBirthDate(date) {
+var year, month, day;
+var monthNames = ['január', 'február', 'március', 'április', 'május', 'június', 'július', 
+'augusztus', 'szeptember', 'október', 'november', 'december']
+year = date.getFullYear();
+month = date.getMonth();
+day = date.getDate();
 
-}
+return year +'. ' + monthNames[month] +'  '+ day +'.'
+
+} 
 
 
 function sumAge(userData) {
