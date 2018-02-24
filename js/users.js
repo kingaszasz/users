@@ -40,10 +40,10 @@ function successAjax(xhttp) {
         full: ['id', 'username', 'password', 'firstname', 'lastname', 'country', 
         'state', 'zipcode', 'city', 'address', 'sex', 'birthdate', 'email', 'phone'],
         b1990: ['username'],
-        names: [ 'lastname', 'firstname'],
-        oldest: ['lastname', 'firstname', 'birthdate'],
+        names: ['firstname', 'lastname',],
+        oldest: ['firstname', 'lastname', 'birthdate'],
         city: ['city', 'users'],
-        b2000: ['lastname', 'firstname', 'username', 'birthdate', 'email', 'phone']
+        b2000: ['firstname', 'lastname', 'username', 'birthdate', 'email', 'phone']
     };        
 
     //   console.log(dataProp);
@@ -54,8 +54,8 @@ function successAjax(xhttp) {
     //console.log(document.getElementById("1990"));
     document.getElementById("full").addEventListener("click", function(){createTable(userDatas, headData.full, dataProp.full);});
     document.getElementById("1990").addEventListener("click", function(){createTable(sort1900(userDatas), headData.b1990, dataProp.b1990);});
-    document.getElementById("oldests").addEventListener("click", function(){createTable(showOldest(userDatas), headData.oldest, dataProp.oldest);});
-    document.getElementById("names").addEventListener("click", function(){showNames(userDatas);});
+    document.getElementById("oldests").addEventListener("click", function(){createTable(sortbyAge(addAge(userDatas)), headData.oldest, dataProp.oldest);});
+    document.getElementById("names").addEventListener("click", function(){createTable(showNames(userDatas), headData.names, dataProp.names);});
     document.getElementById("city").addEventListener("click", function(){createTable(showCity(userDatas), headData.city, dataProp.city);});
     document.getElementById("2000").addEventListener("click", function(){createTable(show2000(userDatas), headData.b2000, dataProp.b2000);});
 
@@ -75,20 +75,95 @@ function sort1900(userData) {
     return newUserData;
 }
 
-function showOldest(userData) {
-    removeTable(document.getElementById('table'));
-    console.log('to be done - showOldest');
-    console.log(document.getElementById('table'));
+/*function showOldest(userData) {
+    var newData = userData.slice();
+    //console.log(newData);
+    var birthDate1, birthDate2, temp; 
+    for (var i = 0; i < newData.length; i++) {
+        birthDate1 = new Date(newData[i].birthdate);
+        for (var j = 1; j < newData.length; j++) {
+            birthDate2 = new Date(newData[j].birthdate);
+            console.log(birthDate2);
+            if (birthDate1.getFullYear() < birthDate2.getFullYear() ) {
+                temp = newData[j];
+                newData[j] = newData[i];
+                newData[i] = temp;
+            }
+        }
+    }
+    console.log(newData);
+    return newData;
+}*/
+
+
+function addAge(userData) {
+    var birthdate, months, age;
+    var newData = userData.slice();
+    var today = new Date();
+    for (var i=0; i< userData.length; i++) {
+            birthdate = new Date(userData[i].birthdate);
+            age = today.getFullYear() - birthdate.getFullYear();
+            if (age > 0 && age < 110) {
+                months = today.getMonth() - birthdate.getMonth();
+                if (months < 0) { 
+                    age -=1;
+                }
+                newData[i].age = age;
+            }
+        }
+return newData;
+console.log(newData);
+}
+
+function sortbyAge(data) {
+    for (var i = 0; i < data.length; i++) {
+        for (var j = 1; j < data.length; j++) {
+            if (data[i].age > data[j].age ) {
+                temp = data[j];
+                data[j] = data[i];
+                data[i] = temp;
+            }
+        }
+    }
+    data = data.slice(0,3);
+    //console.log(data);
+    return data;
 }
 
 function showNames(userData) {
-    removeTable(document.getElementById('table'));
-    console.log('to be done - showNames');
+    newUserData = [];
+    var birthDate; 
+    for (var i = 0; i < userData.length; i++) {
+        birthDate = new Date(userData[i].birthdate);
+        if (birthDate.getFullYear() < 2000 && birthDate.getFullYear() > 1900 &&  userData[i].state !== ""){
+            newUserData.push(userData[i]);
+        }
+    }
+    return  sortByName(newUserData);
+}
+
+function sortByName(data) {
+    var temp = [];
+    for (var i = 0; i < data.length; i++) {
+        for (var j = i + 1; j < data.length; j++) {
+        if (data[i].firstname > data[j].firstname) {
+                temp = data[i];
+                data[i] = data[j];
+                data[j] = temp;
+            } else if (data[i].firstname == data[j].firstname) {
+                if (data[i].lastname > data[j].lastname) {
+                    temp = data[i];
+                    data[i] = data[j];
+                    data[j] = temp;
+                }
+            }
+        }
+    }
+    return data;
 }
 
 // for cities
 function showCity(userData) {
-    removeTable(document.getElementById('table'));
     var cityArr =[]; 
     for (var i = 0; i < userData.length; i++) {
         cityArr.push(userData[i].city);
@@ -112,13 +187,12 @@ function countCities(array) {
                 moreCities = true;
             } else {break;}
             i = temp;
-        }
+            }
         if (moreCities == true) {
                 newData.push(cityObj);
-        }
-    console.log(newData);
+            }
 return newData;
-}
+    }
 }
 
 
@@ -181,14 +255,6 @@ function createTable(userData, head, props) {
 
 
 
-
-
-
-
-
-
-
-
 //for statsistics part:
 
 function searchOldest(userData) {
@@ -229,6 +295,8 @@ day = date.getDate();
 return year +'. ' + monthNames[month] +'  '+ day +'.'
 } 
 
+
+
 function sumAge(userData) {
     var birthdate, months, age;
     var sumAge = 0;
@@ -242,6 +310,7 @@ function sumAge(userData) {
                     age -=1;
                 }
                 sumAge += age;
+                userData.age = age;
             }
         }
 return sumAge;
