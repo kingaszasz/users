@@ -24,7 +24,7 @@ function successAjax(xhttp) {
       A userDatas NEM GLOBÁLIS változó, ne is tegyétek ki globálisra. Azaz TILOS!
       Ha valemelyik függvényeteknek kell, akkor paraméterként adjátok át.
     */
-    var headDataFull = ['Azonosító', 'Felhasználónév', 'Jelszó', 'Vezetéknév', 'Keresztnév', 
+    /*var headDataFull = ['Azonosító', 'Felhasználónév', 'Jelszó', 'Vezetéknév', 'Keresztnév', 
         'Ország', 'Állam/Megye', 'Irányítószám', 'Város', 'Cím', 'Nem', 'Születési dátum', 
         'Email cím', 'Telefonszám'];
     var dataPropsFull = ['id', 'username', 'password', 'firstname', 'lastname', 'country', 
@@ -32,15 +32,40 @@ function successAjax(xhttp) {
     var headDataCity = ['Város', 'Felhasznlóink közül lakosok:'];
     var dataPropsCity = ['city', 'users'];
     var headData1990 = ['Felhasználónév'];
-    var dataProps1990 = ['username'];
-    createTable(userDatas,headDataFull, dataPropsFull);
+    var dataProps1990 = ['username'];*/
+
+    var headData = {
+        full: ['Azonosító', 'Felhasználónév', 'Jelszó', 'Vezetéknév', 'Keresztnév', 
+        'Ország', 'Állam/Megye', 'Irányítószám', 'Város', 'Cím', 'Nem', 'Születési dátum', 
+        'Email cím', 'Telefonszám'],
+        b1990: ['Felhasználónév'],
+        names: ['Vezetéknév', 'Keresztnév'],
+        oldest: ['Vezetéknév', 'Keresztnév', 'Születési dátum'],
+        city: ['Város', 'Felhasznlóink közül lakosok:'],
+        b2000: ['Vezetéknév', 'Keresztnév', 'Felhasználónév', 'Születési dátum', 'Email cím', 'Telefonszám'], 
+    };
+
+    var dataProp = {
+        full: ['id', 'username', 'password', 'firstname', 'lastname', 'country', 
+        'state', 'zipcode', 'city', 'address', 'sex', 'birthdate', 'email', 'phone'],
+        b1990: ['username'],
+        names: [ 'lastname', 'firstname'],
+        oldest: ['lastname', 'firstname', 'birthdate'],
+        city: ['city', 'users'],
+        b2000: ['lastname', 'firstname', 'username', 'birthdate', 'email', 'phone']
+    };        
+
+       console.log(dataProp);
+       console.log(headData);
+
+    createTable(userDatas,headData.full, dataProp.full);
     writeStat(userDatas);
     //console.log(document.getElementById("1990"));
-    document.getElementById("full").addEventListener("click", function(){createTable(userDatas, headDataFull, dataPropsFull);});
-    document.getElementById("1990").addEventListener("click", function(){createTable(sort1900(userDatas), headData1990, dataProps1990);});
+    document.getElementById("full").addEventListener("click", function(){createTable(userDatas, headData.full, dataProp.full);});
+    document.getElementById("1990").addEventListener("click", function(){createTable(sort1900(userDatas), headData.b1990, dataProp.b1990);});
     document.getElementById("oldests").addEventListener("click", function(){showOldest(userDatas);});
     document.getElementById("names").addEventListener("click", function(){showNames(userDatas);});
-    document.getElementById("city").addEventListener("click", function(){createTable(showCity(userDatas), headDataCity, dataPropsCity);});
+    document.getElementById("city").addEventListener("click", function(){createTable(showCity(userDatas), headData.city, dataProp.city);});
     document.getElementById("2000").addEventListener("click", function(){show2000(userDatas);});
 
 }
