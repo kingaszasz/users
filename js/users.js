@@ -71,24 +71,69 @@ function createTable(userData) {
 
 function searchOldest(userData) {
     var birthDate;
-    var earlietsBorn = new Date(userData[0].birthdate);
+    var firstBirth = new Date(userData[0].birthdate);
     var oldestUser = userData[0];
-    for (var i=1; i< userData.length; i++) {
+    for (var i=0; i< userData.length; i++) {
             birthDate = new Date(userData[i].birthdate);
-            if (earlietsBorn > birthDate) {
-                earlietsBorn = birthDate;
+            if (firstBirth > birthDate) {
+                firstBirth = birthDate;
                 oldestUser = userData[i];
             }
         }
 return oldestUser.username +', ' + oldestUser.birthdate  ;
 }
 
+
+function searchYoungest(userData) {
+    var birthDate;
+    var lastBirth = new Date(userData[0].birthdate);
+    var youngestUser = userData[0];
+    for (var i=0; i< userData.length; i++) {
+            birthDate = new Date(userData[i].birthdate);
+            if (lastBirth < birthDate) {
+                lastBirth = birthDate;
+                youngestUser = userData[i];
+            }
+        }
+return youngestUser.username +', ' + youngestUser.birthdate  ;
+}
+
+
+function formatBirthDate(date) {
+
+}
+
+
+function sumAge(userData) {
+    var birthdate, months, age;
+    var sumAge = 0;
+    var today = new Date();
+    for (var i=0; i< userData.length; i++) {
+            birthdate = new Date(userData[i].birthdate);
+            age = today.getFullYear() - birthdate.getFullYear();
+            if (age > 0 && age < 110) {
+                months = today.getMonth() - birthdate.getMonth();
+                if (months < 0) { 
+                    age -=1;
+                }
+                sumAge += age;
+            }
+        }
+return sumAge;
+}
+
+
+function avgAge(userData) {
+    return sumAge(userData)/userData.length;
+}
+
+
 function myStatistic(userData) {
     return {
         'A legidősebb ember felhasználóneve, születési ideje': searchOldest(userData),
-        'A legfiatalabb ember felhasználóneve, születési ideje': searchOldest(userData),
-        'Átlagéletkor': searchOldest(userData),
-        'Össz életkor': searchOldest(userData),
+        'A legfiatalabb ember felhasználóneve, születési ideje': searchYoungest(userData),
+        'Átlagéletkor': avgAge(userData),
+        'Össz életkor': sumAge(userData),
     }
 }
 
