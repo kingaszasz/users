@@ -146,12 +146,17 @@ function myStatistic(userData) {
 }
 
 
+
 function writeStat(userData) {
     var divElem = document.getElementById('stat');
     var stat = myStatistic(userData);
+   console.log(stat);
     for (var i in stat) {
         var pElem = document.createElement('p');
-        pElem.textContent = `${i} : ${stat[i]}`;
+        pElem.textContent = `${i}:`
+        var spanElem = document.createElement('span'); 
+        spanElem.textContent = ` ${stat[i]}`;
+        pElem.appendChild(spanElem);
     divElem.appendChild(pElem);
     }
 }
