@@ -24,16 +24,80 @@ function successAjax(xhttp) {
       A userDatas NEM GLOBÁLIS változó, ne is tegyétek ki globálisra. Azaz TILOS!
       Ha valemelyik függvényeteknek kell, akkor paraméterként adjátok át.
     */
-    createTable(userDatas);
+    var headDataFull = ['Azonosító', 'Felhasználónév', 'Jelszó', 'Vezetéknév', 'Keresztnév', 
+        'Ország', 'Állam/Megye', 'Irányítószám', 'Város', 'Cím', 'Nem', 'Születési dátum', 
+        'Email cím', 'Telefonszám'];
+    var dataPropsFull = ['id', 'username', 'password', 'firstname', 'lastname', 'country', 
+        'state', 'zipcode', 'city', 'address', 'sex', 'birthdate', 'email', 'phone'];
+    var headDataCity = ['Város', 'Felhasznlóink közül lakosok:'];
+    var dataPropsCity = ['city', 'users'];
+    var headData1990 = ['Felhasználónév'];
+    var dataProps1990 = ['username'];
+    createTable(userDatas,headDataFull, dataPropsFull);
     writeStat(userDatas);
-    document.getElementById("1990").addEventListener("click", createTable(sort1900(userDatas)));
-    document.getElementById("oldests").addEventListener("click", showOldest(userDatas));
+    //console.log(document.getElementById("1990"));
+    document.getElementById("full").addEventListener("click", function(){createTable(userDatas, headDataFull, dataPropsFull);});
+    document.getElementById("1990").addEventListener("click", function(){createTable(sort1900(userDatas), headData1990, dataProps1990);});
+    document.getElementById("oldests").addEventListener("click", function(){showOldest(userDatas);});
+    document.getElementById("names").addEventListener("click", function(){showNames(userDatas);});
+    document.getElementById("city").addEventListener("click", function(){createTable(showCity(userDatas), headDataCity, dataPropsCity);});
+    document.getElementById("2000").addEventListener("click", function(){show2000(userDatas);});
 
 }
 
-getData('/js/users.json', successAjax);
 
 
+
+function showOldest(userData) {
+    removeTable(document.getElementById('table'));
+    console.log('to be done - showOldest');
+    console.log(document.getElementById('table'));
+}
+
+function showNames(userData) {
+    removeTable(document.getElementById('table'));
+    console.log('to be done - showNames');
+}
+
+function showCity(userData) {
+    removeTable(document.getElementById('table'));
+    var cityArr =[]; 
+    for (var i = 0; i < userData.length; i++) {
+        cityArr.push(userData[i].city);
+    }
+    cityArr.sort();
+    return countCities(cityArr);
+}
+
+function countCities(array) {
+    var newData = [];
+    var temp;
+    var moreCities;
+    for (var i = 0; i < array.length; i++) {
+        moreCities = false;
+        var cityObj = {city: "", users: 0};
+        for (var j = 1; j < array.length; j++) {
+            if (array[i] == array[j]) {
+                cityObj.city = array[i];
+                cityObj.users ++
+                temp = j;
+                moreCities = true;
+            } else {break;}
+            i = temp;
+        }
+        if (moreCities == true) {
+                newData.push(cityObj);
+        }
+    console.log(newData);
+return newData;
+}
+}
+   
+
+function show2000(userData) {
+    removeTable(document.getElementById('table'));
+    console.log('to be done - show2000');
+}
 
 function generateHead(headData) {
     var tr = document.createElement('tr');
@@ -52,19 +116,28 @@ function generateRow(objElement, arrElement) {
     return td;
 }
 
-function createTable(userData) {
+// mielőtt létrehoznám a táblát, ellenőrzni h van-e a szülőnek gyereke, ha igen, törli
+function removeTable(element) {
+    if (element.hasChildNodes()) {
+        element.removeChild(element.childNodes[0]);
+    }
+}
+
+
+function createTable(userData, head, props) {
+    removeTable(document.getElementById('table'));
     document.querySelector('#table').innerHTML = '';
     var table = document.createElement('table');
-    var headData = ['Azonosító', 'Felhasználónév', 'Jelszó', 'Vezetéknév', 'Keresztnév', 
+    /*var headData = ['Azonosító', 'Felhasználónév', 'Jelszó', 'Vezetéknév', 'Keresztnév', 
         'Ország', 'Állam/Megye', 'Irányítószám', 'Város', 'Cím', 'Nem', 'Születési dátum', 
         'Email cím', 'Telefonszám'];
     var dataProps = ['id', 'username', 'password', 'firstname', 'lastname', 'country', 
-        'state', 'zipcode', 'city', 'address', 'sex', 'birthdate', 'email', 'phone'];
-    table.appendChild(generateHead(headData));
+        'state', 'zipcode', 'city', 'address', 'sex', 'birthdate', 'email', 'phone'];*/
+    table.appendChild(generateHead(head));
     for (var i = 0; i < userData.length; i++) {
         var tr = document.createElement('tr');
-        for (var j = 0; j < dataProps.length; j++) {
-            tr.appendChild(generateRow(userData[i], dataProps[j]));
+        for (var j = 0; j < props.length; j++) {
+            tr.appendChild(generateRow(userData[i], props[j]));
             table.appendChild(tr);
         }
         document.querySelector('#table').appendChild(table);
@@ -166,7 +239,7 @@ function myStatistic(userData) {
 function writeStat(userData) {
     var divElem = document.getElementById('stat');
     var stat = myStatistic(userData);
-   console.log(stat);
+   //console.log(stat);
     for (var i in stat) {
         var pElem = document.createElement('p');
         pElem.textContent = `${i}:`
@@ -177,5 +250,6 @@ function writeStat(userData) {
     }
 }
 
+getData('/js/users.json', successAjax);
 // Live servert használd mindig!!!!!
 /* IDE ÍRD A FÜGGVÉNYEKET!!!!!! NE EBBE AZ EGY SORBA HANEM INNEN LEFELÉ! */
