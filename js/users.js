@@ -26,10 +26,14 @@ function successAjax(xhttp) {
     */
     createTable(userDatas);
     writeStat(userDatas);
-  
+    document.getElementById("1990").addEventListener("click", createTable(sort1900(userDatas)));
+    document.getElementById("oldests").addEventListener("click", showOldest(userDatas));
+
 }
 
 getData('/js/users.json', successAjax);
+
+
 
 function generateHead(headData) {
     var tr = document.createElement('tr');
@@ -49,6 +53,7 @@ function generateRow(objElement, arrElement) {
 }
 
 function createTable(userData) {
+    document.querySelector('#table').innerHTML = '';
     var table = document.createElement('table');
     var headData = ['Azonosító', 'Felhasználónév', 'Jelszó', 'Vezetéknév', 'Keresztnév', 
         'Ország', 'Állam/Megye', 'Irányítószám', 'Város', 'Cím', 'Nem', 'Születési dátum', 
@@ -66,6 +71,17 @@ function createTable(userData) {
     }
 }
 
+function sort1900(userData) {
+    newUserData = [];
+    var birthDate; 
+    for (var i = 0; i < userData.length; i++) {
+        birthDate = new Date(userData[i].birthdate);
+        if (birthDate.getFullYear() < 1990){
+            newUserData.push(userData[i]);
+        }
+    }
+    return newUserData;
+}
 
 
 
@@ -73,7 +89,7 @@ function searchOldest(userData) {
     var birthDate;
     var firstBirth = new Date(userData[0].birthdate);
     var oldestUser = userData[0];
-    for (var i=0; i< userData.length; i++) {
+    for (var i=1; i< userData.length; i++) {
             birthDate = new Date(userData[i].birthdate);
             if (firstBirth > birthDate) {
                 firstBirth = birthDate;
@@ -88,7 +104,7 @@ function searchYoungest(userData) {
     var birthDate;
     var lastBirth = new Date(userData[0].birthdate);
     var youngestUser = userData[0];
-    for (var i=0; i< userData.length; i++) {
+    for (var i=1; i< userData.length; i++) {
             birthDate = new Date(userData[i].birthdate);
             if (lastBirth < birthDate) {
                 lastBirth = birthDate;
