@@ -24,16 +24,7 @@ function successAjax(xhttp) {
       A userDatas NEM GLOBÁLIS változó, ne is tegyétek ki globálisra. Azaz TILOS!
       Ha valemelyik függvényeteknek kell, akkor paraméterként adjátok át.
     */
-    /*var headDataFull = ['Azonosító', 'Felhasználónév', 'Jelszó', 'Vezetéknév', 'Keresztnév', 
-        'Ország', 'Állam/Megye', 'Irányítószám', 'Város', 'Cím', 'Nem', 'Születési dátum', 
-        'Email cím', 'Telefonszám'];
-    var dataPropsFull = ['id', 'username', 'password', 'firstname', 'lastname', 'country', 
-        'state', 'zipcode', 'city', 'address', 'sex', 'birthdate', 'email', 'phone'];
-    var headDataCity = ['Város', 'Felhasznlóink közül lakosok:'];
-    var dataPropsCity = ['city', 'users'];
-    var headData1990 = ['Felhasználónév'];
-    var dataProps1990 = ['username'];*/
-
+    
     var headData = {
         full: ['Azonosító', 'Felhasználónév', 'Jelszó', 'Vezetéknév', 'Keresztnév', 
         'Ország', 'Állam/Megye', 'Irányítószám', 'Város', 'Cím', 'Nem', 'Születési dátum', 
@@ -55,23 +46,34 @@ function successAjax(xhttp) {
         b2000: ['lastname', 'firstname', 'username', 'birthdate', 'email', 'phone']
     };        
 
-       console.log(dataProp);
-       console.log(headData);
+    //   console.log(dataProp);
+    //  console.log(headData);
 
     createTable(userDatas,headData.full, dataProp.full);
     writeStat(userDatas);
     //console.log(document.getElementById("1990"));
     document.getElementById("full").addEventListener("click", function(){createTable(userDatas, headData.full, dataProp.full);});
     document.getElementById("1990").addEventListener("click", function(){createTable(sort1900(userDatas), headData.b1990, dataProp.b1990);});
-    document.getElementById("oldests").addEventListener("click", function(){showOldest(userDatas);});
+    document.getElementById("oldests").addEventListener("click", function(){createTable(showOldest(userDatas), headData.oldest, dataProp.oldest);});
     document.getElementById("names").addEventListener("click", function(){showNames(userDatas);});
     document.getElementById("city").addEventListener("click", function(){createTable(showCity(userDatas), headData.city, dataProp.city);});
-    document.getElementById("2000").addEventListener("click", function(){show2000(userDatas);});
+    document.getElementById("2000").addEventListener("click", function(){createTable(show2000(userDatas), headData.b2000, dataProp.b2000);});
 
 }
 
 
 
+function sort1900(userData) {
+    newUserData = [];
+    var birthDate; 
+    for (var i = 0; i < userData.length; i++) {
+        birthDate = new Date(userData[i].birthdate);
+        if (birthDate.getFullYear() < 1990){
+            newUserData.push(userData[i]);
+        }
+    }
+    return newUserData;
+}
 
 function showOldest(userData) {
     removeTable(document.getElementById('table'));
@@ -84,6 +86,7 @@ function showNames(userData) {
     console.log('to be done - showNames');
 }
 
+// for cities
 function showCity(userData) {
     removeTable(document.getElementById('table'));
     var cityArr =[]; 
@@ -117,13 +120,26 @@ function countCities(array) {
 return newData;
 }
 }
-   
+
+
 
 function show2000(userData) {
-    removeTable(document.getElementById('table'));
-    console.log('to be done - show2000');
+    newUserData = [];
+    var birthDate; 
+    for (var i = 0; i < userData.length; i++) {
+        birthDate = new Date(userData[i].birthdate);
+        if (birthDate.getFullYear() < 2000 || userData[i].city !== 'Budapest'){
+            newUserData.push(userData[i]);
+        }
+    }
+    return newUserData;
 }
 
+
+
+
+
+// generates tabel for all
 function generateHead(headData) {
     var tr = document.createElement('tr');
     headData.forEach(function (element) {
@@ -141,23 +157,16 @@ function generateRow(objElement, arrElement) {
     return td;
 }
 
-// mielőtt létrehoznám a táblát, ellenőrzni h van-e a szülőnek gyereke, ha igen, törli
 function removeTable(element) {
     if (element.hasChildNodes()) {
         element.removeChild(element.childNodes[0]);
     }
 }
 
-
 function createTable(userData, head, props) {
     removeTable(document.getElementById('table'));
     document.querySelector('#table').innerHTML = '';
     var table = document.createElement('table');
-    /*var headData = ['Azonosító', 'Felhasználónév', 'Jelszó', 'Vezetéknév', 'Keresztnév', 
-        'Ország', 'Állam/Megye', 'Irányítószám', 'Város', 'Cím', 'Nem', 'Születési dátum', 
-        'Email cím', 'Telefonszám'];
-    var dataProps = ['id', 'username', 'password', 'firstname', 'lastname', 'country', 
-        'state', 'zipcode', 'city', 'address', 'sex', 'birthdate', 'email', 'phone'];*/
     table.appendChild(generateHead(head));
     for (var i = 0; i < userData.length; i++) {
         var tr = document.createElement('tr');
@@ -169,19 +178,18 @@ function createTable(userData, head, props) {
     }
 }
 
-function sort1900(userData) {
-    newUserData = [];
-    var birthDate; 
-    for (var i = 0; i < userData.length; i++) {
-        birthDate = new Date(userData[i].birthdate);
-        if (birthDate.getFullYear() < 1990){
-            newUserData.push(userData[i]);
-        }
-    }
-    return newUserData;
-}
 
 
+
+
+
+
+
+
+
+
+
+//for statsistics part:
 
 function searchOldest(userData) {
     var birthDate;
@@ -197,7 +205,6 @@ function searchOldest(userData) {
 return oldestUser.username +', ' + formatBirthDate(firstBirth);  
 }
 
-
 function searchYoungest(userData) {
     var birthDate;
     var lastBirth = new Date(userData[0].birthdate);
@@ -212,7 +219,6 @@ function searchYoungest(userData) {
 return youngestUser.username +', ' + formatBirthDate(lastBirth);
 }
 
-
 function formatBirthDate(date) {
 var year, month, day;
 var monthNames = ['január', 'február', 'március', 'április', 'május', 'június', 'július', 
@@ -220,11 +226,8 @@ var monthNames = ['január', 'február', 'március', 'április', 'május', 'jún
 year = date.getFullYear();
 month = date.getMonth();
 day = date.getDate();
-
 return year +'. ' + monthNames[month] +'  '+ day +'.'
-
 } 
-
 
 function sumAge(userData) {
     var birthdate, months, age;
@@ -244,11 +247,9 @@ function sumAge(userData) {
 return sumAge;
 }
 
-
 function avgAge(userData) {
     return sumAge(userData)/userData.length;
 }
-
 
 function myStatistic(userData) {
     return {
@@ -258,8 +259,6 @@ function myStatistic(userData) {
         'Össz életkor': sumAge(userData),
     }
 }
-
-
 
 function writeStat(userData) {
     var divElem = document.getElementById('stat');
@@ -274,6 +273,8 @@ function writeStat(userData) {
     divElem.appendChild(pElem);
     }
 }
+
+
 
 getData('/js/users.json', successAjax);
 // Live servert használd mindig!!!!!
